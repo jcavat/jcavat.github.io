@@ -79,8 +79,7 @@ private paginate(activePage, size) : string[] {
 
 You observed that a transform number so string with the map method. Js is weakly typed, so it is not mandatory but it is consistent for me.
 
-<iframe style="width: 100%; height: 600px" src="https://embed.plnkr.co/ggTVQD2NhtfhpJRNPT80/" frameborder="0" allowfullscren="allowfullscren"></iframe>
-
+<iframe style="width: 100%; height: 600px" src="https://embed.plnkr.co/c1oNAW/" frameborder="0" allowfullscren="allowfullscren"></iframe>
 Check out the final Angular2 version on [Plunker][plunker-link] and the [Gist][gist-link] repository for Haskell, PureScript and TypeScript version of the function paginate.
 
 
