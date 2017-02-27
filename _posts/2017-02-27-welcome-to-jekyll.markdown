@@ -4,8 +4,6 @@ title:  "Pagination Buttons With Related Html Table"
 date:   2017-02-27 10:08:07 +0100
 categories: [html, css, angular2, bootstrap, functional programming]
 ---
-Pagination Buttons With Related Html Table
-
 I recently was looking for a solution to generate and manage pagination buttons related to a large collection inside a table with Angular2. I would use it in a modal page such that the table doesn’t override it. I first try to attach a scroll bar to the tbody of the table to limit the size. This solution used css tricks and was not consistent according to the navigator.
 
 Finally, I start implementing my own Angular2 component. This component could be attached to any collections. My start developing incrementally and I was quickly face to poor quality code and mutable state to determine the context. I say stop and start isolate the main functionality. This which provide a list of buttons :
