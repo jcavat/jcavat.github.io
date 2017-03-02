@@ -6,18 +6,19 @@ categories: [html, css, angular2, bootstrap, functional programming]
 ---
 I recently was looking for a solution to generate and manage pagination buttons related to a large collection inside a table with Angular2. I would use it in a modal page such that the table doesn’t override it. I first try to attach a scroll bar to the tbody of the table to limit the size. This solution used css tricks and was not consistent according to the navigator.
 
-Finally, I start implementing my own Angular2 component. This component could be attached to any collections. My start developing incrementally and I was quickly face to poor quality code and mutable state to determine the context. I say stop and start isolate the main functionality. This which provide a list of buttons :
+Finally, I start implementing my own Angular2 component. This component could be attached to any collections. I start developing incrementally and I was quickly face to poor quality code and mutable state to determine the context. I stopped and meditate in a more functional way. I isolate the main functionality. This last can be formalized as:
 
 * Given a collection and the current page
-* Provide the list of Strings showing maximum 10 elements and comprising page number or ‘…’ if the number of pages is greater than 10.
+* Provide the list of Strings showing maximum 10 elements and comprising page number or ‘…’ if the number of pages is greater than 10. (Previous and Next buttons are not counted)
 
 This illustrates the objective of the paginated buttons-group: 
 ![Pagination buttons]({{ site.url }}/assets/pagin1.jpg)
 
-Considering I like functional programming even if I mainly use imperative paradigm, I try I first version in Haskell before reimplementing in JS.
+Considering I like functional programming even if I mainly use imperative paradigm, I try a first version in Haskell before reimplementing in JS.
 
 Haskell Version:
 {% highlight haskell %}
+{-| page is the number of pages and activep is the number of the active page -}
 paginate :: Int -> Int -> [String]
 paginate page activep
     | page == 0                 = []
@@ -27,10 +28,14 @@ paginate page activep
     | otherwise                 = map show [1..2] ++ [".."] ++ map show [activep-1..activep+2] ++ [".."] ++ map show [page-1, page]
 {% endhighlight %}
 
-Then, I think "great". Let keep this version and look at how integrating it with a TypeScript-Angular2 project. I looked for some ways to compile Haskell to JS with ghcjs but for now, the project is not very robust. Other solutions: PureScript or ELM. I chose Purescript instead of ELM because this last focus on view.
+Then, I think "great". Let's keep this version and look at how integrating it with a TypeScript-Angular2 project. I looked for some ways to compile Haskell to JS with ghcjs but for now, the project is not very robust. Other solutions: PureScript or ELM. I chose Purescript instead of ELM because this last focus on view.
 
 I change the syntax a bit and arrive to this version: 
 {% highlight haskell %}
+mapToString :: forall a. ( Show a ) => Array a -> Array String
+mapToString = map show
+
+{-| page is the number of pages and activep is the number of the active page -}
 paginate :: Int -> Int -> Array String
 paginate page activep
     | page == 0                 = []
@@ -46,12 +51,11 @@ paginate page activep
 
 Nice. It works perfectly with my Angular2 project but if I look at the generated JS compressed code: ~32000 characters and 113 Kio. It includes lots of PuresScript standard libraries.
 
-Ok, I suggest using PureScript in projects including lots of PureScript code. But just for a couple of functionality, it's not wise. So I confess the defeat and write a TypeScript + Lodash version. Finally, this is not so bad: 
+Ok, I suggest using PureScript in projects including lots of PureScript code. But just for a couple of functionalities, it's not wise. So I confess the defeat and write a TypeScript + Lodash version. Finally, this is not so bad: 
 
-{% highlight haskell %}
-private paginate(activePage, size) : string[] {
-  size = Math.ceil(size);
-  console.log(activePage, size);
+{% highlight Scala %}
+/* page is the number of pages and activep is the number of the active page */
+private paginate(size, activePage) : string[] {
   if (size == 0){
     return [];
   } else if (size <= 10) {
@@ -77,12 +81,12 @@ private paginate(activePage, size) : string[] {
 }
 {% endhighlight %}
 
-You observed that a transform number so string with the map method. Js is weakly typed, so it is not mandatory but it is consistent for me.
+You observed that I transform number to string with the map method. Js is weakly typed, so it is not mandatory but it remains coherent.
 
 <iframe style="width: 100%; height: 600px" src="https://embed.plnkr.co/c1oNAW/" frameborder="0" allowfullscren="allowfullscren"></iframe>
-Check out the final Angular2 version on [Plunker][plunker-link] and the [Gist][gist-link] repository for Haskell, PureScript and TypeScript version of the function paginate.
+Check out the final Angular2 version on [Plunker][plunker-link]{:target="_blank"} and the [Gist][gist-link]{:target="_blank"} repository for Haskell, PureScript and TypeScript version of the function paginate.
 
 
-[plunker-link]: https://embed.plnkr.co/ggTVQD2NhtfhpJRNPT80/
+[plunker-link]: https://embed.plnkr.co/c1oNAW/
 [gist-link]: https://gist.github.com/jcavat/64338156116a5aaff93e892d187801df
 
